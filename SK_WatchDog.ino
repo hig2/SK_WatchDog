@@ -1,6 +1,6 @@
 //SK_WatchDog
 //v1.0.0
-//#include <GyverWDT.h>
+#include <GyverWDT.h>
    
 //general pin
 const int usbVotagePin = 7;
@@ -33,8 +33,8 @@ void setup(){
   ledInit();
   gpioInit();
   pinMode(usbVotagePin, INPUT);
-  //Watchdog.enable(RESET_MODE, WDT_PRESCALER_512);
-  // Watchdog.enable(RST_MODE, WDT_TIMEOUT_4S);
+  Watchdog.enable(RESET_MODE, WDT_PRESCALER_512);
+
 
 }
 
@@ -50,7 +50,7 @@ void loop(){
   modemSwichWatcher();
   comandWatcher();
   watchDogStopReboot();
-  //Watchdog.reset();
+  Watchdog.reset();
 }
 
 void usbVoltageWatcher(){
