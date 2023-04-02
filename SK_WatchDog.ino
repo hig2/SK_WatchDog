@@ -20,8 +20,8 @@ unsigned int globalState[15]={
   0, //7 Напряжение питания резервное (не реализованно!)
   0, //8 Номер рабочего канала питания(не реализованно! 0 - основной, 1 - резервный )
   0, //9 (Запрет перезагрузки 0 - работает 1 - запрет)
-  0, //10 Обратная связь от переключателя модема (0 - М1, 1 - М2)
-  1, //11 Номер выбранного модема
+  1, //10 Номер выбранного модема
+  1, //11 Номер выбранной антенны
   0, //12 (не реализованно!)
   101, //13  версия прошивки вач дога 
   0  //14 CRC
@@ -33,10 +33,7 @@ void setup(){
   ledInit();
   gpioInit();
   pinMode(usbVotagePin, INPUT);
-  modemButtonSwitchWatcher();
   Watchdog.enable(RESET_MODE, WDT_PRESCALER_512);
-
-
 }
 
 
@@ -49,6 +46,8 @@ void loop(){
   ledWatcher();
   statusWatcher(); // Смотрим показатели и меняем состояние
   modemSwichWatcher();
+  antSwichWatcher();
+  modemButtonSwitchWatcher();
   comandWatcher();
   watchDogStopReboot();
   Watchdog.reset();
@@ -104,17 +103,17 @@ void comandWatcher(){
     case 69:
      while(true){}
     break;
-    case 11:
-     //
-    break;
-    case 12:
-     //
-    break;
     case 13:
-     globalState[11] = 1; //Выбран 1М
+     globalState[10] = 1; //Выбран 1М
     break;
     case 14:
-     globalState[11] = 2; //Выбран 2М
+     globalState[10] = 2; //Выбран 2М
+    break;
+    case 15:
+     globalState[11] = 1; //Выбрана 1А
+    break;
+    case 16:
+     globalState[11] = 2; //Выбрана 2А
     break;
   }
   globalState[3] = 0; // очистка буфера команд 

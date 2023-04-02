@@ -1,7 +1,7 @@
 //GPIO
 /*
- * D4 - // Обратная связь от переключателя модема
- * D3 - // переключение модема
+ *
+ * 
  * 
  * 
  */
@@ -16,8 +16,8 @@
 
 void gpioInit(){
   
-  pinMode(d4_GPIO_pin,  INPUT);
-  pinMode(d3_GPIO_pin, OUTPUT);
+  pinMode(d4_GPIO_pin, INPUT);
+  pinMode(d3_GPIO_pin, INPUT);
   pinMode(d2_GPIO_pin, INPUT_PULLUP); // подтягиваем кнопку к HIGH
   pinMode(a3_GPIO_pin, OUTPUT);
   pinMode(a2_GPIO_pin, OUTPUT);
@@ -25,6 +25,7 @@ void gpioInit(){
   pinMode(a0_GPIO_pin, OUTPUT);
 
   digitalWrite(d3_GPIO_pin, HIGH); //Включаем М1 по умолчанию
+  digitalWrite(d4_GPIO_pin, HIGH); //Включаем А1 по умолчанию
   digitalWrite(a3_GPIO_pin, LOW);
   digitalWrite(a2_GPIO_pin, LOW);
   digitalWrite(a1_GPIO_pin, LOW);
@@ -40,14 +41,21 @@ void modemSwichWatcher(){
   }else{
     globalState[10] = 1;
   }
+}
 
-  // состояние обратной связи
-  if(digitalRead(d4_GPIO_pin)){
-    globalState[10] = 1;
+void antSwichWatcher(){
+  //коммутация антенны 
+  if(globalState[11] == 1){
+    modemSwitch(1);
+  } else if(globalState[11] == 2){
+    modemSwitch(2);
   }else{
-    globalState[10] = 0;
+    globalState[11] = 1;
   }
 }
+
+
+
 
 void modemButtonSwitchWatcher(){
 
@@ -61,10 +69,10 @@ void modemButtonSwitchWatcher(){
       buttonPressFlag = true;
     }else if(millis() - t > timePressButton && !buttonPressFlag_2){
 
-      if(globalState[11] == 2){
-        globalState[11] = 1;
+      if(globalState[10] == 2){
+        globalState[10] = 1;
       }else{
-        globalState[11]++; 
+        globalState[10]++; 
       }
       
       buttonPressFlag_2 = true;
@@ -102,4 +110,15 @@ void modemSwitch(int M){
      digitalWrite(d3_GPIO_pin, LOW);
     break;
   }
-};
+}
+
+void antSwitch(int a){
+  switch (a){
+    case 1:
+     digitalWrite(d4_GPIO_pin, HIGH);
+    break;
+    case 2:
+     digitalWrite(d4_GPIO_pin, LOW);
+    break;
+  }
+}
